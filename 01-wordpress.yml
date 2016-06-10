@@ -1,0 +1,27 @@
+---
+- hosts: wordpress-hosts
+  vars:
+  remote_user: root
+  tasks:
+
+  - name: Set time zone to UTC time
+    when: ansible_date_time.tz != 'UTC'
+    command: timedatectl set-timezone UTC
+
+  - name: Install curl, git, zip, zsh
+    apt: name=curl,git,zip,zsh  state=latest  force=no
+
+  - name: Create 'deploy' user
+    user: name=deploy  state=present  system=yes  generate_ssh_key=yes  groups=sudo
+
+  - name: Create dummy .zshrc file
+    file: name=~/.zshrc  state=touch  owner=deploy
+
+  - name: Change deploy user shell to zsh
+    user: name=deploy shell=/bin/zsh
+
+  - name: Create RSA keys
+    user: name=deploy  generate_ssh_key=yes
+
+  - name: Copy public key to 'deploy' user's ~.ssh/authorized_keys
+    authorized_key: user=deploy  key="{{ lookup('file', '/Users/kbennett/.ssh/id_rsa.pub') }}"

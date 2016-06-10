@@ -1,0 +1,7 @@
+---
+- hosts: wordpress-hosts
+  vars:
+  remote_user: deploy
+  tasks:
+  - name: Clone BBS Blog repo
+    shell: mkdir -p bbs-jekyll-blog; cd bbs-jekyll-blog; git clone https://github.com/keithrbennett/bbs-jekyll-blog.git

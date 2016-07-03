@@ -3,15 +3,32 @@
   vars:
   remote_user: deploy
 
-  roles:
-    - role: rvm_io.rvm1-ruby
-      rvm1_install_flags: '--auto-dotfiles --user-install'
-      rvm1_install_path: "/home/{{ ansible_ssh_user }}/.rvm"
-      # Last Ruby will become the rvm default:
-      rvm1_rubies:
-#        - 'jruby-9.0.5.0'
-        - 'ruby-2.3.0'
+#  roles:
+#    - role: rvm_io.rvm1-ruby
+#      rvm1_install_flags: '--auto-dotfiles --user-install'
+#      rvm1_install_path: "/home/{{ ansible_ssh_user }}/.rvm"
+#      # Last Ruby will become the rvm default:
+#      rvm1_rubies:
+##        - 'jruby-9.0.5.0'
+#        - 'ruby-2.3.0'
+
+
+# MUST ADD THIS TO SUDOERS FILE USING SUDO VISUDO:
+# deploy ALL=(ALL) NOPASSWD:ALL
 
   tasks:
-  - name: Install Oh-My-Zsh
-    shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+
+  - name: Add Brightbox Ubuntu repository
+    apt_repository: repo=ppa:brightbox/ruby-ng
+    become: true
+
+  - name: Install Ruby
+    apt: update_cache=yes  name=ruby2.3,ruby2.3-dev  state=latest
+    become: true
+
+  - name: Install gem build prerequisites
+    apt:  name=build-essential,make  state=latest
+    become: true
+
+#  - name: Install Oh-My-Zsh
+#    shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"

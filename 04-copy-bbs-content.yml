@@ -1,3 +1,6 @@
+# !!! At this time it is necessary to log into the WordPress site and "install it"
+#     before proceeding.
+
 ---
 - hosts: wordpress-hosts
   vars:
@@ -5,8 +8,18 @@
 
   tasks:
 
+  - name: Get status of original-content.xml
+    stat:  path=/home/deploy/downloads/original-content.xml
+    register: original_content
+
   - name: Copy XML file to remote
-    copy: src=data/keithrbennett039stechnicalblog.wordpress.2016-05-07.xml  dest=/home/deploy/original-content.xml
+    copy:
+      src: data/keithrbennett039stechnicalblog.wordpress.2016-05-07.xml
+      dest: /home/deploy/downloads/original-content.xml
+    when: not original_content.stat.exists
 
+  - name: Install & activate WordPress importer
+    shell: wp plugin install wordpress-importer --activate
 
-
+  - name: Import it into WordPress
+    shell: wp --authors=create import /home/deploy/downloads/original-content.xml

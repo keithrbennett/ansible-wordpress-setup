@@ -15,7 +15,7 @@
     apt: name=curl,git,zip,zsh  state=latest  force=no
 
   - name: Create 'deploy' user
-    user: name=deploy  state=present  system=yes  generate_ssh_key=yes  groups=sudo
+    user: name=deploy  state=present  system=yes  generate_ssh_key=yes  groups="sudo,www-data"
 
   - name: Create dummy .zshrc file
     file: name=~/.zshrc  state=touch  owner=deploy

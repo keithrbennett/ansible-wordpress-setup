@@ -9,10 +9,6 @@
     stat: path=/usr/local/bin/wp
     register: wp
 
-  - name: Create downloads directory if not present
-    file: dest=/home/deploy/downloads  state=directory
-    when: not wp.stat.exists
-
   - name: Download WordPress Command Line utility
     get_url:
       url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
@@ -27,3 +23,18 @@
     become: true
     command: cp  /home/deploy/downloads/wp-cli.phar  /usr/local/bin/wp
     when: not wp.stat.exists
+
+
+# Set up configuration file.
+
+  - name: Get stat of config file.
+    stat: path=/home/deploy/.wp-cli/config.yml
+    register: config_file
+
+  - name: Create WP CLI control directory if needed
+    file: path=~/.wp-cli  state=directory
+    when: not config_file.stat.exists
+
+  - name: Copy config file if needed.
+    copy: src=data/wp-cli-config.yml  dest=/home/deploy/.wp-cli/config.yml
+    when: not config_file.stat.exists

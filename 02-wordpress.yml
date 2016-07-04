@@ -15,17 +15,27 @@
 
   tasks:
 
+  - name: Get Ruby status
+    stat: path=/usr/bin/ruby
+    register: ruby
+
   - name: Add Brightbox Ubuntu repository
     apt_repository: repo=ppa:brightbox/ruby-ng
     become: true
+    when: not ruby.stat.exists
 
   - name: Install Ruby
     apt: update_cache=yes  name=ruby2.3,ruby2.3-dev  state=latest
     become: true
+    when: not ruby.stat.exists
 
   - name: Install gem build prerequisites
     apt:  name=build-essential,make  state=latest
     become: true
+
+  - name: Create downloads directory if not present
+    file: dest=/home/deploy/downloads  state=directory
+
 
 #  - name: Install Oh-My-Zsh
 #    shell: sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"

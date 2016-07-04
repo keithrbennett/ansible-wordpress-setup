@@ -4,6 +4,7 @@
 
 - hosts: wordpress-hosts
   vars:
+    packages_to_install: "curl,git,zip,zsh"
   remote_user: root
   tasks:
 
@@ -11,8 +12,8 @@
     when: ansible_date_time.tz != 'UTC'
     command: timedatectl set-timezone UTC
 
-  - name: Install curl, git, zip, zsh
-    apt: name=curl,git,zip,zsh  state=latest  force=no
+  - name: Install OS utility packages
+    apt: name={{ packages_to_install }}  state=latest  force=no
 
   - name: Create 'deploy' user
     user: name=deploy  state=present  system=yes  generate_ssh_key=yes  groups="sudo,www-data"

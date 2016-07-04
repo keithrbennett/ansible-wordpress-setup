@@ -1,34 +1,37 @@
 ---
 - hosts: wordpress-hosts
   vars:
+    wp_filespec:              /usr/local/bin/wp
+    wp_cli_config_filespec:   /home/deploy/.wp-cli/config.yml
+    wp_cli_download_location: /home/deploy/downloads/wp-cli.phar
   remote_user: deploy
 
   tasks:
 
   - name: See if it's already at its destination.
-    stat: path=/usr/local/bin/wp
+    stat: path={{ wp_filespec }}
     register: wp
 
   - name: Download WordPress Command Line utility
     get_url:
       url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-      dest: /home/deploy/downloads
+      dest: ~/downloads
     when: not wp.stat.exists
 
   - name: Set WP-CLI executable bit
-    file: path=/home/deploy/downloads/wp-cli.phar  mode="u=rwx,g=rx,o=rx"
+    file: path={{ wp_cli_download_location }}  mode="u=rwx,g=rx,o=rx"
     when: not wp.stat.exists
 
   - name: Copy to destination if not already there.
     become: true
-    command: cp  /home/deploy/downloads/wp-cli.phar  /usr/local/bin/wp
+    command: cp  {{ wp_cli_download_location }}  {{ wp_filespec }}
     when: not wp.stat.exists
 
 
 # Set up configuration file.
 
   - name: Get stat of config file.
-    stat: path=/home/deploy/.wp-cli/config.yml
+    stat: path={{ wp_cli_config_filespec }}
     register: config_file
 
   - name: Create WP CLI control directory if needed
@@ -36,5 +39,5 @@
     when: not config_file.stat.exists
 
   - name: Copy config file if needed.
-    copy: src=data/wp-cli-config.yml  dest=/home/deploy/.wp-cli/config.yml
+    copy: src=data/wp-cli-config.yml  dest={{ wp_cli_config_filespec }}
     when: not config_file.stat.exists

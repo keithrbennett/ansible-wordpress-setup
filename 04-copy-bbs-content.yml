@@ -1,12 +1,26 @@
-# !!! At this time it is necessary to log into the WordPress site and "install it"
-#     before proceeding.
-
 ---
 - hosts: wordpress-hosts
   vars:
+    dirs_to_make_writable: "/var/www/html  /var/www/html/wp-admin  /var/www/html/wp-content  /var/www/html/wp-includes"
   remote_user: deploy
 
   tasks:
+
+  - name: Make /var/www/html and its subdirectories writable by anyone in www-data group
+    shell: find /var/www/html -type d -exec chmod 775 {} ";"
+    become: true
+
+  - name: Install WordPress tables into MySQL
+    shell: wp
+      --path=/var/www/html
+      --url=http://exp.bbs-software.com
+      --title="Keith R. Bennett's Technical Blog"
+      --admin_user=keithrbennett
+      --admin_password=keiths-tech-blog
+      --admin_email=bad-email@bad-domain.com
+      core install
+    args:
+      creates: /var/www/html/wp-config.php
 
   - name: Get status of original-content.xml
     stat:  path=/home/deploy/downloads/original-content.xml
@@ -22,4 +36,6 @@
     shell: wp plugin install wordpress-importer --activate
 
   - name: Import it into WordPress
-    shell: wp --authors=create import /home/deploy/downloads/original-content.xml
+    shell: wp --authors=create import /home/deploy/downloads/original-content.xml && touch /var/www/html/data-imported.bool
+    args:
+      creates: /var/www/html/data-imported.bool

@@ -13,9 +13,6 @@
 #        - 'ruby-2.3.0'
 
 
-# MUST ADD THIS TO SUDOERS FILE USING SUDO VISUDO:
-# deploy ALL=(ALL) NOPASSWD:ALL
-
   tasks:
 
   - name: Add Brightbox Ubuntu repository

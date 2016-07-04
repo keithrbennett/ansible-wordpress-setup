@@ -1,4 +1,7 @@
 ---
+
+# Assumes a WordPress Digital Ocean instance.
+
 - hosts: wordpress-hosts
   vars:
   remote_user: root

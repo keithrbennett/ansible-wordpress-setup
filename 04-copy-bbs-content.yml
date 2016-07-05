@@ -2,6 +2,7 @@
 - hosts: wordpress-hosts
   vars:
     dirs_to_make_writable: "/var/www/html  /var/www/html/wp-admin  /var/www/html/wp-content  /var/www/html/wp-includes"
+    wp_admin_pw: "{{ lookup('env','HOME') }}"
   remote_user: deploy
 
   tasks:
@@ -16,7 +17,7 @@
       --url=http://exp.bbs-software.com
       --title="Keith R. Bennett's Technical Blog"
       --admin_user=keithrbennett
-      --admin_password=keiths-tech-blog
+      --admin_password="{{ wp_admin_pw }}"
       --admin_email=bad-email@bad-domain.com
       core install
     args:

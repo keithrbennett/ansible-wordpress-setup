@@ -9,19 +9,23 @@
 
   - name: Make /var/www/html and its subdirectories writable by anyone in www-data group
     shell: find /var/www/html -type d -exec chmod 775 {} ";"
+           && touch /home/deploy/ansible-flags/make-html-writable
     become: true
+    args:
+      creates: /home/deploy/ansible-flags/make-html-writable
 
+  # ? For this to work, you must have logged into the new host as root using ssh:
   - name: Install WordPress tables into MySQL
     shell: wp
       --path=/var/www/html
-      --url=http://exp.bbs-software.com
+      --url=http://blog.bbs-software.com
       --title="Keith R. Bennett's Technical Blog"
       --admin_user=keithrbennett
       --admin_password="{{ wp_admin_pw }}"
       --admin_email=bad-email@bad-domain.com
-      core install
+      core install && touch ~/ansible-flags/install-wp
     args:
-      creates: /var/www/html/wp-config.php
+      creates: ~/ansible-flags/install-wp
 
   - name: Get status of original-content.xml
     stat:  path=/home/deploy/downloads/original-content.xml
@@ -34,9 +38,12 @@
     when: not original_content.stat.exists
 
   - name: Install & activate WordPress importer
-    shell: wp plugin install wordpress-importer --activate
+    shell: wp plugin install wordpress-importer --activate && touch ~/ansible-flags/install-wp-importer
+    args:
+      creates: ~/ansible-flags/install-wp-importer
 
   - name: Import it into WordPress
-    shell: wp --authors=create import /home/deploy/downloads/original-content.xml && touch /var/www/html/data-imported.bool
+    shell: wp --authors=create import /home/deploy/downloads/original-content.xml
+           && touch ~/ansible-flags/wp-data-imported
     args:
-      creates: /var/www/html/data-imported.bool
+      creates: ~/ansible-flags/wp-data-imported

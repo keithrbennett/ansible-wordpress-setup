@@ -9,7 +9,7 @@ def create_wp_droplet
 
   wordpress_droplet_config = {
       name:     'bbs-wordpress',
-      region:   'fra1',
+      region:   'sgp1',
       image:    wordpress_image_id,
       size:     '1gb',
       ssh_keys: ['ed:1c:68:ee:fb:35:b8:60:c0:ee:24:e5:64:7c:b2:58']
@@ -31,5 +31,5 @@ end
 
 
 # puts wordpress_image_id
-# create_wp_droplet
+create_wp_droplet
 list_droplets

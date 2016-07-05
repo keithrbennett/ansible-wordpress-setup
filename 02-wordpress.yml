@@ -15,6 +15,9 @@
 
   tasks:
 
+  - name: Create directory to contain Ansible flags signalling step executions
+    file: name=~/ansible-flags  state=directory
+
   - name: Get Ruby status
     stat: path=/usr/bin/ruby
     register: ruby

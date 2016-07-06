@@ -1,0 +1,2 @@
+alias ap=ansible-playbook
+ap 01* && ap 02* && ap 03* && ap 04* && ap 05*

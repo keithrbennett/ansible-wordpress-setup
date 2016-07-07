@@ -16,25 +16,7 @@
   tasks:
 
   - name: Create directory to contain Ansible flags signalling step executions
-    file: name=~/ansible-flags  state=directory
-
-  - name: Get Ruby status
-    stat: path=/usr/bin/ruby
-    register: ruby
-
-  - name: Add Brightbox Ubuntu repository
-    apt_repository: repo=ppa:brightbox/ruby-ng
-    become: true
-    when: not ruby.stat.exists
-
-  - name: Install Ruby
-    apt: update_cache=yes  name=ruby2.3,ruby2.3-dev  state=latest
-    become: true
-    when: not ruby.stat.exists
-
-  - name: Install gem build prerequisites
-    apt:  name=build-essential,make  state=latest
-    become: true
+    file: name=~/ansible-flags  state=directory  mode=777
 
   - name: Create downloads directory if not present
     file: dest=/home/deploy/downloads  state=directory

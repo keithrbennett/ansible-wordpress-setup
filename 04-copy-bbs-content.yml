@@ -1,18 +1,14 @@
 ---
 - hosts: wordpress-hosts
   vars:
-    dirs_to_make_writable: "/var/www/html  /var/www/html/wp-admin  /var/www/html/wp-content  /var/www/html/wp-includes"
-    wp_admin_pw: "{{ lookup('env','HOME') }}"
+    wp_admin_pw: "{{ lookup('env','WP_ADMIN_PW') }}"
   remote_user: deploy
 
   tasks:
 
   - name: Make /var/www/html and its subdirectories writable by anyone in www-data group
     shell: find /var/www/html -type d -exec chmod 775 {} ";"
-           && touch /home/deploy/ansible-flags/make-html-writable
     become: true
-    args:
-      creates: /home/deploy/ansible-flags/make-html-writable
 
   # ? For this to work, you must have logged into the new host as root using ssh:
   - name: Install WordPress tables into MySQL
@@ -23,9 +19,11 @@
       --admin_user=keithrbennett
       --admin_password="{{ wp_admin_pw }}"
       --admin_email=bad-email@bad-domain.com
-      core install && touch ~/ansible-flags/install-wp
+      core install
+    become: yes
+    become_user: www-data
     args:
-      creates: ~/ansible-flags/install-wp
+      creates: ~deploy/ansible-flags/install-wp
 
   - name: Get status of original-content.xml
     stat:  path=/home/deploy/downloads/original-content.xml

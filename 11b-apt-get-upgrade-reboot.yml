@@ -1,0 +1,11 @@
+---
+- hosts: wordpress-hosts
+  vars:
+  remote_user: root
+  tasks:
+
+  - name: Upgrade all OS packages
+    apt: upgrade=dist  update_cache=yes  state=latest
+
+  - name: Reboot
+    shell: reboot

@@ -1,0 +1,3 @@
+./recreate-vm.rb
+# Log in as root before proceeding?
+./run-all-playbooks

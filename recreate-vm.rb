@@ -70,10 +70,14 @@ end
 
 def remove_vm(floating_ip_addr)
   floating_ip = CLIENT.floating_ips.find(ip: floating_ip_addr)
-  droplet_id = floating_ip.droplet.id
-  puts "Removing droplet with id #{droplet_id}"
-  CLIENT.droplets.delete(id: droplet_id)
-  puts "Removed droplet at #{floating_ip_addr}"
+  if floating_ip.droplet
+    droplet_id = floating_ip.droplet.id
+    puts "Removing droplet with id #{droplet_id}"
+    CLIENT.droplets.delete(id: droplet_id)
+    puts "Removed droplet at #{floating_ip_addr}"
+  else
+    puts "No droplet associated with floating IP #{floating_ip_addr}. Not deleting any VM."
+  end
 end
 
 remove_vm(SGP1_FLOATING_IP)

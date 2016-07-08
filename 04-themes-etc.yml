@@ -11,6 +11,6 @@
 
   - name: Install Jupiter theme
     shell: wp theme install ~/downloads/jupiter-theme.zip --activate
-           && touch ~/ansible-flags/install-jupiter-theme
     args:
-      creates: ~/ansible-flags/install-jupiter-theme
+      creates: /var/www/html/wp-content/themes/jupiter
+

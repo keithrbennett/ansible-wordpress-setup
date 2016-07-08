@@ -8,9 +8,6 @@
   remote_user: root
   tasks:
 
-  - name: ssh into root account once as per Digital Ocean requirements
-    local_action: command ssh root@blog login
-
   - name: Set time zone to UTC time
     when: ansible_date_time.tz != 'UTC'
     command: timedatectl set-timezone UTC

@@ -1,3 +1,5 @@
 ./recreate-vm.rb
 # Log in as root before proceeding?
+Type "exit [Enter]:"
+ssh root@login
 ./run-all-playbooks

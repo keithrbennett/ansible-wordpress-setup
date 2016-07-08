@@ -8,6 +8,13 @@
 
   tasks:
 
+  - name: Create directory to contain Ansible flags signalling step executions
+    file: name=~/ansible-flags  state=directory  mode=777
+
+  - name: Create downloads directory if not present
+    file: dest=/home/deploy/downloads  state=directory
+
+
   - name: See if it's already at its destination.
     stat: path={{ wp_filespec }}
     register: wp

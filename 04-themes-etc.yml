@@ -18,3 +18,19 @@
     shell: chown -R www-data:www-data /var/www/html
     become: true
 
+  # The following 2 steps are identical except for the plugin name.
+  # I'm using items so that the shell command is identical.
+
+  - name: Install plugin artbees-captcha
+    shell: wp plugin is-installed {{ item }} && echo already_installed || wp plugin install {{ item }}
+    with_items:
+      -  artbees-captcha
+    register: cmd_result
+    changed_when: cmd_result.stdout != "already_installed"
+
+  - name: Install plugin js_composer_theme
+    shell: (wp plugin is-installed {{ item }} && echo already_installed) || wp plugin install {{ item }}
+    with_items:
+      -  js_composer_theme
+    register: cmd_result
+    changed_when: cmd_result.stdout != "already_installed"

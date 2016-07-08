@@ -14,3 +14,7 @@
     args:
       creates: /var/www/html/wp-content/themes/jupiter
 
+  - name: Set owner/group of /var/www/html tree to www-data.
+    shell: chown -R www-data:www-data /var/www/html
+    become: true
+

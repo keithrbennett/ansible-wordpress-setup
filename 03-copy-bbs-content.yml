@@ -7,7 +7,7 @@
   tasks:
 
   - name: Make /var/www/html and its subdirectories writable by anyone in www-data group
-    shell: find /var/www/html -type d -exec chmod 775 {} ";"
+    shell: chmod -R 775 /var/www/html
     become: true
 
   # ? For this to work, you must have logged into the new host as root using ssh:
@@ -22,8 +22,19 @@
       core install
     become: yes
     become_user: www-data
-    args:
-      creates: ~deploy/ansible-flags/install-wp
+
+  - name: Set owner/group of /var/www/html tree to www-data.
+    shell: chown -R www-data:www-data /var/www/html
+    become: true
+
+  - name: Update WordPress installation
+    shell: wp --path=/var/www/html core update
+    become: yes
+    become_user: www-data
+
+  - name: Set owner/group of /var/www/html tree to www-data.
+    shell: chown -R www-data:www-data /var/www/html
+    become: true
 
   - name: Get status of original-content.xml
     stat:  path=/home/deploy/downloads/original-content.xml
@@ -39,6 +50,10 @@
     shell: wp plugin install wordpress-importer --activate && touch ~/ansible-flags/install-wp-importer
     args:
       creates: ~/ansible-flags/install-wp-importer
+
+  - name: Set owner/group of /var/www/html tree to www-data.
+    shell: chown -R www-data:www-data /var/www/html
+    become: true
 
   - name: Import it into WordPress
     shell: wp --authors=create import /home/deploy/downloads/original-content.xml

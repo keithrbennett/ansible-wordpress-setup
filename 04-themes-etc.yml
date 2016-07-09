@@ -14,23 +14,33 @@
     register: cmd_result
     changed_when: cmd_result.stdout != "ThemeAlreadyInstalled"
 
-  - name: Set owner/group of /var/www/html tree to www-data.
-    shell: chown -R www-data:www-data /var/www/html
-    become: true
-
   # The following 2 steps are identical except for the plugin name.
   # I'm using items so that the shell command is identical.
 
   - name: Install plugin artbees-captcha
-    shell: wp plugin is-installed {{ item }} && echo already_installed || wp plugin install {{ item }}
-    with_items:
-      -  artbees-captcha
+    shell: wp plugin is-installed artbees-captcha && echo already_installed
+          || wp plugin install http://static-cdn.artbees.net/plugins/artbees-captcha.zip
     register: cmd_result
     changed_when: cmd_result.stdout != "already_installed"
 
   - name: Install plugin js_composer_theme
-    shell: (wp plugin is-installed {{ item }} && echo already_installed) || wp plugin install {{ item }}
-    with_items:
-      -  js_composer_theme
+    shell: (wp plugin is-installed js_composer_theme && echo already_installed)
+           || wp plugin install --activate http://static-cdn.artbees.net/plugins/js_composer_theme.zip
     register: cmd_result
     changed_when: cmd_result.stdout != "already_installed"
+
+  - name: Install plugin syntaxhighlighter
+    shell: (wp plugin is-installed syntaxhighlighter && echo already_installed)
+           || wp plugin install --activate syntaxhighlighter
+    register: cmd_result
+    changed_when: cmd_result.stdout != "already_installed"
+
+  # Can set this to run if any previous step fails?
+  - name: Set owner/group of /var/www/html tree to www-data.
+    shell: chown -R www-data:www-data /var/www/html
+    become: true
+
+  - name: Delete 'hello, world' post
+    shell: if (wp post list | grep "^1.*hello-world") then echo present; wp post delete 1; fi
+    register: status
+    changed_when: status.stdout == 'present'

@@ -64,7 +64,6 @@ def reset_floating_ip(ip, new_droplet)
   CLIENT.floating_ip_actions.assign(ip: ip, droplet_id: new_droplet.id)
   puts "Assigned floating ip #{ip} to droplet #{new_droplet.id}. Waiting for completion..."
   fip = wait_for_floating_ip_assignment.()
-  ap fip.to_h
 end
 
 

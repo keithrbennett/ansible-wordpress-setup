@@ -1,11 +1,4 @@
-Find out why:
+Find out how to test core-updatedb for changed_when.
 
-wp plugin install js_composer_theme
-
-does not work *and returns success!*:
-
-deploy@bbs-wordpress ~ % wp plugin install js_composer_theme
-Warning: Couldn't find 'js_composer_theme' in the WordPress.org plugin directory.
-
-However, it works when using the WordPress GUI.
+Replace top image with BBS image.
 

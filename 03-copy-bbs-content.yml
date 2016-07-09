@@ -28,7 +28,7 @@
     become: true
 
   - name: Update WordPress installation
-    shell: wp --path=/var/www/html core update
+    shell: wp --path=/var/www/html core update && wp --path=/var/www/html core update-db
     become: yes
     become_user: www-data
 

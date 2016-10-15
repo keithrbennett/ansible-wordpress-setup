@@ -6,7 +6,8 @@
   tasks:
 
   - name: Copy Themeforest Jupiter WordPress theme to host
-    copy: src=~/software/themeforest-5177775-jupiter-multipurpose-responsive-theme-wordpress-theme.zip
+#    copy: src=~/software/themeforest-5177775-jupiter-multipurpose-responsive-theme-wordpress-theme.zip
+    copy: src=~/software/themeforest-5177775-jupiter-multipurpose-responsive-theme.zip
           dest=~/downloads/jupiter-theme.zip
 
   - name: Install Jupiter theme

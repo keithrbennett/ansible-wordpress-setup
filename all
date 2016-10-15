@@ -1,3 +1,3 @@
-# ./recreate-vm.rb
-# Log in as root before proceeding!
-# ./run-all-playbooks
+./recreate-vm.rb
+ssh -q -o StrictHostKeyChecking=no root@blog exit
+./run-all-playbooks

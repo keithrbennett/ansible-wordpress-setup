@@ -2,3 +2,5 @@ Find out how to test core-updatedb for changed_when.
 
 Replace top image with BBS image.
 
+Update plugins (Akismet), themes.
+

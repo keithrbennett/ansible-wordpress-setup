@@ -32,6 +32,19 @@
     become: yes
     become_user: www-data
 
+
+  - name: Update WordPress plugins
+    shell: wp --path=/var/www/html plugin --all update
+    become: yes
+    become_user: www-data
+
+
+  - name: Update WordPress theme
+    shell: wp --path=/var/www/html theme --all update
+    become: yes
+    become_user: www-data
+
+
   - name: Set owner/group of /var/www/html tree to www-data.
     shell: chown -R www-data:www-data /var/www/html
     become: true

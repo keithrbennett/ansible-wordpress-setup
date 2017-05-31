@@ -2,9 +2,11 @@
 
 require 'awesome_print'
 require 'droplet_kit'
+require 'shellwords'
 
 CLIENT = DropletKit::Client.new(access_token: ENV['DIGOCEAN_API_TOKEN'])
 SGP1_FLOATING_IP = '188.166.206.130'
+HOST_ALIASES = %w(blog do)
 
 
 def wait_for_droplet_status(droplet, target_value = 'active', interval = 1)
@@ -34,18 +36,29 @@ def create_wp_droplet
   new_droplet = CLIENT.droplets.create(new_droplet_template)
   puts "Created new droplet #{new_droplet.id}. Waiting for active state..."
   wait_for_droplet_status(new_droplet)
-  puts "Droplet now active."
+  puts "Droplet now active:"
+  sleep 5
   new_droplet
 end
 
 
 def wordpress_image_id
-  CLIENT.images.all.select { |image| image.slug == 'wordpress' }.first.id
+  word_press_images = CLIENT.images.all.select { |image| image.slug == 'wordpress-16-04' }
+  word_press_images.last.id
 end
 
 
 def list_droplets
   CLIENT.droplets.all.map(&:to_h).each { |d| ap d }
+end
+
+
+# Run command, outputting both stdout and stderr when it is done
+def run_command(command)
+  puts command
+  output = `#{command} 2>&1`
+  puts output
+  output
 end
 
 
@@ -79,9 +92,31 @@ def remove_vm(floating_ip_addr)
   end
 end
 
-remove_vm(SGP1_FLOATING_IP)
-new_droplet = create_wp_droplet
-reset_floating_ip(SGP1_FLOATING_IP, new_droplet)
 
-# Remove stale entry from known_hosts
-`ssh-keygen -R #{SGP1_FLOATING_IP}`
+def update_known_hosts
+  aliases = HOST_ALIASES + Array(SGP1_FLOATING_IP)
+  known_hosts_filespec = File.join(ENV['HOME'], '.ssh', 'known_hosts')
+  puts
+
+  aliases.each do |host_spec|
+
+    puts "Attempting to remove #{host_spec} from known_hosts file..."
+    run_command("ssh-keygen -R #{host_spec}")
+
+    puts "Attempting to register new key for #{host_spec} in known_hosts file..."
+    lines = run_command("ssh-keyscan -t rsa -H #{host_spec} 2>&1").split("\n")
+    good_lines = lines.reject { |line| /^#/.match(line) }
+    File.open(known_hosts_filespec, 'a') { |f| f << good_lines.join("\n") << "\n" }
+  end
+end
+
+
+def main
+  remove_vm(SGP1_FLOATING_IP)
+  new_droplet = create_wp_droplet
+  reset_floating_ip(SGP1_FLOATING_IP, new_droplet)
+  update_known_hosts
+  puts "Done with recreate-vm."
+end
+
+main

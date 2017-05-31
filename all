@@ -1,3 +1,14 @@
-./recreate-vm.rb
-ssh -q -o StrictHostKeyChecking=no root@blog exit
-./run-all-playbooks
+# Note: This shows the steps that need to be taken,
+# but they cannot be successfully run one at a time in this script,
+# they need to be run individually or on the same command line:
+
+
+./recreate-vm.rb && sleep 20 && ssh root@do && ./run-all-playbooks.rb
+
+
+
+# ./recreate-vm.rb
+# sleep 20
+# echo Logging into new instance, you may exit when you get the prompt...
+# ssh root@do
+# ./run-all-playbooks.rb

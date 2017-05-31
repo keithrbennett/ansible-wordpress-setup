@@ -8,4 +8,4 @@
     apt: upgrade=dist  update_cache=yes  state=latest
 
   - name: Reboot
-    shell: reboot
+    shell: (sleep 10 && reboot) &

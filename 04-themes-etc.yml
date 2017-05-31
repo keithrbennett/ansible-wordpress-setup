@@ -5,30 +5,15 @@
 
   tasks:
 
-  - name: Copy Themeforest Jupiter WordPress theme to host
-#    copy: src=~/software/themeforest-5177775-jupiter-multipurpose-responsive-theme-wordpress-theme.zip
-    copy: src=~/software/themeforest-5177775-jupiter-multipurpose-responsive-theme.zip
-          dest=~/downloads/jupiter-theme.zip
+  - name: Copy activello WordPress theme to host
+    get_url: url=https://downloads.wordpress.org/theme/activello.1.3.1.zip
+          dest=~/downloads/activello.1.3.1.zip
 
-  - name: Install Jupiter theme
-    shell: wp theme is-installed jupiter && echo ThemeAlreadyInstalled || wp --activate theme install ~/downloads/jupiter-theme.zip --activate
+
+  - name: Install and Activate Activello theme
+    shell: wp theme is-installed activello && echo ThemeAlreadyInstalled || wp --activate theme install ~/downloads/activello.1.3.1.zip --activate
     register: cmd_result
     changed_when: cmd_result.stdout != "ThemeAlreadyInstalled"
-
-  # The following 2 steps are identical except for the plugin name.
-  # I'm using items so that the shell command is identical.
-
-  - name: Install plugin artbees-captcha
-    shell: wp plugin is-installed artbees-captcha && echo already_installed
-          || wp plugin install http://static-cdn.artbees.net/plugins/artbees-captcha.zip
-    register: cmd_result
-    changed_when: cmd_result.stdout != "already_installed"
-
-  - name: Install plugin js_composer_theme
-    shell: (wp plugin is-installed js_composer_theme && echo already_installed)
-           || wp plugin install --activate http://static-cdn.artbees.net/plugins/js_composer_theme.zip
-    register: cmd_result
-    changed_when: cmd_result.stdout != "already_installed"
 
   - name: Install plugin syntaxhighlighter
     shell: (wp plugin is-installed syntaxhighlighter && echo already_installed)

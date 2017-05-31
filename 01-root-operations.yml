@@ -2,6 +2,25 @@
 
 # Assumes a WordPress Digital Ocean instance.
 
+# Note: wordpress-hosts alias needs to be defined in an inventory file,
+# e.g. /etc/ansible/hosts:
+
+# [jekyll-hosts]
+# bj
+#
+# [wordpress-hosts]
+# do
+#
+# [mint-vms]
+# mint-vm
+#
+# [digocean-hosts]
+# d
+
+# Also, if there is already an entry in known_hosts, running this script will produce an error:
+
+
+
 - hosts: wordpress-hosts
   vars:
     packages_to_install: "curl,git,zip,zsh"

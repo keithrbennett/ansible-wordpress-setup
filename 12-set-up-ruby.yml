@@ -15,7 +15,7 @@
     when: not ruby.stat.exists
 
   - name: Install Ruby
-    apt: update_cache=yes  name=ruby2.3,ruby2.3-dev  state=latest
+    apt: update_cache=yes  name=ruby2.4,ruby2.4-dev  state=latest
     become: true
     when: not ruby.stat.exists
 

@@ -55,7 +55,7 @@
 
   - name: Copy XML file to remote
     copy:
-      src: data/keithrbennett039stechnicalblog.wordpress.2016-05-07.xml
+      src: data/current.xml   # current.xml s/b symlinked to the appropriate file
       dest: /home/deploy/downloads/original-content.xml
     when: not original_content.stat.exists
 

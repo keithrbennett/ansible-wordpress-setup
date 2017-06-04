@@ -1,0 +1,29 @@
+#!/usr/bin/ruby
+
+require 'shellwords'
+require 'trick_bag'
+
+puts "Backs up MySQL data base."
+
+DATE_TIME_STRING = Time.now.strftime('%Y-%m-%d_%H-%M-%S')
+BACKUP_FILESPEC  = File.join('/var/backups', "#{DATE_TIME_STRING}-mysql-backup.sql")
+LINK_FILESPEC    = '/var/backups/current-wordpress-backup.sql'
+
+script = %Q{
+MYSQL_PASSWORD=`grep DB_PASSWORD /var/www/html/wp-config.php | cut -d "," -f 2 | cut -d "'" -f 2`
+echo "Backing up data base to #{BACKUP_FILESPEC}"
+mysqldump -u wordpress --password=$MYSQL_PASSWORD  --all-databases  > #{BACKUP_FILESPEC}
+[ -f #{LINK_FILESPEC} ] && rm #{LINK_FILESPEC}
+ln -s #{BACKUP_FILESPEC} #{LINK_FILESPEC}
+echo Exit code was $?
+echo Last lines were:
+tail -5 #{BACKUP_FILESPEC}
+}
+
+# TrickBag::Io::TempFiles.file_containing(Shellwords.shellescape(script), 'mysql_backup') do |cmd_filespec|
+TrickBag::Io::TempFiles.file_containing(script, 'mysql_backup') do |cmd_filespec|
+  `chmod +x #{cmd_filespec}`
+  puts `#{cmd_filespec} 2>&1`
+end
+
+puts "Latest backup file #{BACKUP_FILESPEC} can also be referred to as #{LINK_FILESPEC}."
